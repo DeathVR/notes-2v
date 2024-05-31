@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_list/domain/bloc/todo_bloc.dart';
 import 'package:todo_list/ui/pages/home_page.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,7 +13,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: BlocProvider(
+        create: (context) => TodoBloc(),
+        child: const HomePage(),
+      ),
     );
   }
 }
