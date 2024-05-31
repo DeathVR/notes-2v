@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:todo_list/domain/bloc/todo_bloc.dart';
 import 'package:todo_list/domain/hive/hive_box.dart';
-import 'package:todo_list/domain/provider/app_provider.dart';
 import 'package:todo_list/ui/pages/add_page.dart';
 import 'package:todo_list/ui/pages/detail_page.dart';
 import 'package:todo_list/ui/pages/search_page.dart';
@@ -14,12 +14,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<AppProvider>(context);
+    final bloc = BlocProvider.of<TodoBloc>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          model.clearPhoto();
-          model.clearControllers();
+          bloc.add(ClearImageControl());
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const AddPage(),
@@ -40,6 +39,10 @@ class HomePage extends StatelessWidget {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.sort),
+          ),
           IconButton(
             onPressed: () {
               Navigator.of(context).push(
@@ -73,7 +76,9 @@ class HomePage extends StatelessWidget {
                       );
                     },
                     child: NotesCard(
-                      action: () => model.deleteBox(index, context),
+                      action: () {
+                        bloc.add(DeleteBox(index, context));
+                      },
                       title: appDataList[index].title,
                       info: appDataList[index].info,
                       data: appDataList[index].data,

@@ -8,14 +8,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
-      home: BlocProvider(
-        create: (context) => TodoBloc(),
-        child: const HomePage(),
+    return BlocProvider(
+      create: (context) => TodoBloc(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+        ),
+        home: const HomePage(),
       ),
     );
   }

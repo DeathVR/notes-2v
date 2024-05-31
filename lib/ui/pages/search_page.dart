@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:todo_list/domain/bloc/todo_bloc.dart';
 import 'package:todo_list/domain/hive/hive_box.dart';
 import 'package:todo_list/domain/hive/todo_data.dart';
-import 'package:todo_list/domain/provider/app_provider.dart';
 import 'package:todo_list/ui/pages/detail_page.dart';
-
 import 'package:todo_list/ui/widgets/notes_card.dart';
 
 class SearchPage extends StatefulWidget {
@@ -41,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<AppProvider>(context);
+    final bloc = BlocProvider.of<TodoBloc>(context);
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -82,7 +81,8 @@ class _SearchPageState extends State<SearchPage> {
                   );
                 },
                 child: NotesCard(
-                  action: () => model.deleteBox(index, context),
+                  isDelete: true,
+                  action: () => bloc.add(DeleteBox(index, context)),
                   title: filter[index].title,
                   info: filter[index].info,
                   data: filter[index].data,

@@ -5,12 +5,14 @@ class NotesCard extends StatelessWidget {
   final String title;
   final String info;
   final String data;
+  final bool? isDelete;
   const NotesCard({
     super.key,
     required this.title,
     required this.info,
     required this.data,
     required this.action,
+    this.isDelete = false,
   });
 
   @override
@@ -41,13 +43,15 @@ class NotesCard extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () => action(),
-                icon: const Icon(
-                  Icons.delete,
-                  color: Color(0xffD93F3F),
-                ),
-              ),
+              isDelete == false
+                  ? IconButton(
+                      onPressed: () => action(),
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Color(0xffD93F3F),
+                      ),
+                    )
+                  : const SizedBox(),
             ],
           ),
           const SizedBox(height: 6),

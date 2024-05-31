@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:todo_list/domain/provider/app_provider.dart';
+import 'package:todo_list/domain/bloc/todo_bloc.dart';
 import 'package:todo_list/ui/widgets/notes_input.dart';
 
 class AddPage extends StatelessWidget {
@@ -11,12 +11,15 @@ class AddPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<AppProvider>(context);
-
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController infoController = TextEditingController();
+    final bloc = BlocProvider.of<TodoBloc>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          model.addInfo(context);
+          final state = context.read<TodoBloc>().state;
+          if (state is! TodoLoaded) return;
+          bloc.add(AddInfo(titleController.text, infoController.text, context));
         },
         backgroundColor: Colors.white,
         child: const Icon(Icons.check),
@@ -47,7 +50,7 @@ class AddPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            NotesInput(controller: model.titleController),
+            NotesInput(controller: titleController),
             const SizedBox(height: 16),
             const Text(
               'Описание:',
@@ -60,57 +63,70 @@ class AddPage extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             NotesInput(
-              controller: model.infoController,
+              controller: infoController,
               lines: 4,
             ),
             const SizedBox(height: 20),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 6,
-                  mainAxisSpacing: 6,
-                ),
-                itemCount: model.imagePaths.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return const AddImage();
-                  } else {
-                    final imagePath = model.imagePaths[index - 1];
-                    return Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.white,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Image(
-                                fit: BoxFit.cover,
-                                image: FileImage(File(imagePath)),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: IconButton(
-                                onPressed: () {
-                                  model.removeImagePath(index - 1);
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(
-                                      const Color.fromRGBO(255, 255, 255, 0.7)),
-                                ),
-                                icon: const Icon(Icons.close),
-                              ),
-                            ),
-                          ],
-                        ),
+            BlocBuilder<TodoBloc, TodoState>(
+              builder: (context, state) {
+                final bloc = BlocProvider.of<TodoBloc>(context);
+                if (state is TodoLoaded) {
+                  return Expanded(
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6,
                       ),
-                    );
-                  }
-                },
-              ),
+                      itemCount: state.imagePath.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return const AddImage();
+                        } else {
+                          final imagePath = state.imagePath[index - 1];
+                          return Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.white,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Image(
+                                      fit: BoxFit.cover,
+                                      image: FileImage(File(imagePath)),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        bloc.add(DeleteImage(index - 1));
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            WidgetStateProperty.all(
+                                          const Color.fromRGBO(
+                                              255, 255, 255, 0.7),
+                                        ),
+                                      ),
+                                      icon: const Icon(Icons.close),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  );
+                } else {
+                  return const AddImage();
+                }
+              },
             ),
           ],
         ),
@@ -120,21 +136,18 @@ class AddPage extends StatelessWidget {
 }
 
 class AddImage extends StatelessWidget {
-  final Function? action;
-  const AddImage({super.key, this.action});
+  const AddImage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<AppProvider>(context);
+    final bloc = BlocProvider.of<TodoBloc>(context);
 
     Future<void> _pickImage() async {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
-        model.addImagePath(pickedFile.path);
-      } else {
-        print('No image selected.');
+        bloc.add(AddImagePath(pickedFile.path));
       }
     }
 
