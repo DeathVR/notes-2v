@@ -46,7 +46,10 @@ class DeleteBox extends TodoEvent {
   @override
   List<Object> get props => [index, context];
 }
+<<<<<<< HEAD
 
 class TodoLoadedList extends TodoEvent {}
 
 class ButtonSort extends TodoEvent {}
+=======
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:todo_list/domain/bloc/todo_bloc.dart';
 import 'package:todo_list/domain/hive/todo_data.dart';
+=======
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_list/domain/bloc/todo_bloc.dart';
+import 'package:todo_list/domain/hive/hive_box.dart';
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
 import 'package:todo_list/ui/pages/add_page.dart';
 import 'package:todo_list/ui/pages/detail_page.dart';
 import 'package:todo_list/ui/pages/search_page.dart';
@@ -9,7 +15,11 @@ import 'package:todo_list/ui/pages/search_page.dart';
 import 'package:todo_list/ui/widgets/notes_card.dart';
 
 class HomePage extends StatelessWidget {
+<<<<<<< HEAD
   const HomePage({Key? key});
+=======
+  const HomePage({super.key});
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +49,13 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
+<<<<<<< HEAD
             onPressed: () {
               bloc.add(ButtonSort());
             },
+=======
+            onPressed: () {},
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
             icon: const Icon(Icons.sort),
           ),
           IconButton(
@@ -56,6 +70,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+<<<<<<< HEAD
       body: BlocBuilder<TodoBloc, TodoState>(
         builder: (context, state) {
           if (state is TodoLoaded) {
@@ -112,6 +127,51 @@ class HomePage extends StatelessWidget {
               ),
             );
           }
+=======
+      body: ValueListenableBuilder(
+        valueListenable: HiveBoxes.appBox.listenable(),
+        builder: (context, value, child) {
+          final appDataList = value.values.toList();
+
+          return appDataList.isNotEmpty
+              ? ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DetailInforamtion(
+                          title: appDataList[index].title,
+                          data: appDataList[index].data,
+                          info: appDataList[index].info,
+                          image: appDataList[index].imagePath,
+                        ),
+                      );
+                    },
+                    child: NotesCard(
+                      action: () {
+                        bloc.add(DeleteBox(index, context));
+                      },
+                      title: appDataList[index].title,
+                      info: appDataList[index].info,
+                      data: appDataList[index].data,
+                    ),
+                  ),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 16),
+                  itemCount: appDataList.length,
+                )
+              : Center(
+                  child: Text(
+                    'Добавьте заметки',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontFamily: 'Karla',
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                );
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
         },
       ),
     );

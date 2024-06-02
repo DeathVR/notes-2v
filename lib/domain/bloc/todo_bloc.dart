@@ -8,20 +8,31 @@ part 'todo_event.dart';
 part 'todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
+<<<<<<< HEAD
   TodoBloc() : super(const TodoLoaded(todoList: [])) {
     HiveBoxes.appBox.watch().listen((event) {
       add(TodoLoadedList());
     });
+=======
+  TodoBloc() : super(const TodoLoaded()) {
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
     on<AddImagePath>(_onAddImagePath);
     on<DeleteImage>(_onDeleteImage);
     on<ClearImageControl>(_onClearImageControl);
     on<AddInfo>(_onAddInfo);
     on<DeleteBox>(_onDeleteBox);
+<<<<<<< HEAD
     on<TodoLoadedList>(_onTodoList);
     on<ButtonSort>(_onButtonSort);
   }
 
   void _onAddImagePath(AddImagePath event, Emitter<TodoState> emit) {
+=======
+  }
+
+  void _onAddImagePath(AddImagePath event, Emitter<TodoState> emit) {
+    if (state is! TodoLoaded) return;
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
     final currentState = state as TodoLoaded;
     final updatedImagePaths = List<String>.from(currentState.imagePath)
       ..add(event.path);
@@ -29,6 +40,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _onDeleteImage(DeleteImage event, Emitter<TodoState> emit) {
+<<<<<<< HEAD
+=======
+    if (state is! TodoLoaded) return;
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
     final currentState = state as TodoLoaded;
     final updatedImagePaths = List<String>.from(currentState.imagePath)
       ..removeAt(event.index);
@@ -36,11 +51,19 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _onClearImageControl(ClearImageControl event, Emitter<TodoState> emit) {
+<<<<<<< HEAD
+=======
+    if (state is! TodoLoaded) return;
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
     final currentState = state as TodoLoaded;
     emit(currentState.copyWith(imagePaths: []));
   }
 
   Future<void> _onAddInfo(event, Emitter<TodoState> emit) async {
+<<<<<<< HEAD
+=======
+    if (state is! TodoLoaded) return;
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
     final currentState = state as TodoLoaded;
     await HiveBoxes.appBox.add(
       TodoData(
@@ -55,6 +78,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   Future<void> _onDeleteBox(DeleteBox event, Emitter<TodoState> emit) async {
     await HiveBoxes.appBox.deleteAt(event.index);
   }
+<<<<<<< HEAD
 
   void _onTodoList(TodoLoadedList event, Emitter<TodoState> emit) {
     final currentState = state as TodoLoaded;
@@ -67,4 +91,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     final currentState = state as TodoLoaded;
     emit(currentState.copyWith(isSorted: !currentState.isSorted));
   }
+=======
+>>>>>>> d024d81a32efcd8e5f83fa91301e848dafa9620d
 }
